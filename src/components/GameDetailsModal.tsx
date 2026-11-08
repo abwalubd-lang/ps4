@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type AnimationEvent, type CSSProperties } from 'react';
-import type { Game } from '../data';
+import { GENRES, type Game } from '../data';
+import { coverSources } from '../lib/covers';
+import { BundleBadge } from './BundleBadge';
 import { useI18n } from '../i18n/LanguageContext';
 import { GameCover } from './GameCover';
 import { Icon } from './Icon';
@@ -16,7 +18,7 @@ const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)'
 /** Where the panel starts (relative to its centred resting place) so it appears to open from the card. */
 function originVars(origin: DOMRect | null): CSSProperties {
   if (!origin || window.innerWidth < 800) return {};
-  const panelWidth = Math.min(880, window.innerWidth - 64);
+  const panelWidth = Math.min(780, window.innerWidth - 48);
   return {
     '--from-x': `${origin.left + origin.width / 2 - window.innerWidth / 2}px`,
     '--from-y': `${origin.top + origin.height / 2 - window.innerHeight / 2}px`,
@@ -81,20 +83,40 @@ export function GameDetailsModal({ game, origin, onClose }: Props) {
           <button type="button" className="sheet__close" onClick={requestClose} aria-label={t.close}>
             <Icon name="close" size={18} />
           </button>
-          <div className="sheet__body">
-            <GameCover key={game.id} game={game} eager sizes="(min-width: 800px) 320px, 70vw" className="sheet__cover" />
-            <div className="sheet__text">
-              <h2 id="sheet-title" className="sheet__title" lang={lang}>
-                {lang === 'ar' ? game.titleAr : game.titleEn}
-              </h2>
-              <p className="sheet__subtitle" lang={other} dir={other === 'ar' ? 'rtl' : 'ltr'}>
-                {other === 'ar' ? game.titleAr : game.titleEn}
-              </p>
-              <p id="sheet-story" className="sheet__story" lang={lang}>
-                {lang === 'ar' ? game.synopsisAr : game.synopsisEn}
-              </p>
+
+          {/* Header: the game's own artwork, blurred, sets the mood behind the cover and title. */}
+          <header className="detail__hero">
+            <img className="detail__ambient" src={coverSources(game)[0]?.src} alt="" aria-hidden="true" />
+            <div className="detail__hero-inner">
+              <GameCover key={game.id} game={game} eager sizes="(min-width: 800px) 220px, 46vw" className="detail__cover" />
+              <div className="detail__heading">
+                <h2 id="sheet-title" className="detail__title" lang={lang}>
+                  {lang === 'ar' ? game.titleAr : game.titleEn}
+                </h2>
+                <p className="detail__subtitle" lang={other} dir={other === 'ar' ? 'rtl' : 'ltr'}>
+                  {other === 'ar' ? game.titleAr : game.titleEn}
+                </p>
+                <ul className="detail__chips">
+                  <li>
+                    <BundleBadge />
+                  </li>
+                  <li className="detail__chip">{t.released(game.releaseYear)}</li>
+                  {game.genres.slice(0, 2).map((g) => (
+                    <li key={g} className="detail__chip">
+                      {GENRES[g][lang]}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
+          </header>
+
+          <section className="detail__story">
+            <h3 className="detail__label">{t.story}</h3>
+            <p id="sheet-story" className="detail__text" lang={lang}>
+              {lang === 'ar' ? game.synopsisAr : game.synopsisEn}
+            </p>
+          </section>
         </div>
       )}
     </dialog>

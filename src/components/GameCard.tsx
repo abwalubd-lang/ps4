@@ -1,7 +1,8 @@
 import { memo, type CSSProperties } from 'react';
-import type { Game } from '../data';
+import { GENRES, type Game } from '../data';
 import { useI18n } from '../i18n/LanguageContext';
 import { useReveal } from '../lib/useReveal';
+import { BundleBadge } from './BundleBadge';
 import { GameCover } from './GameCover';
 
 interface Props {
@@ -15,6 +16,7 @@ export const GameCard = memo(function GameCard({ game, index, eager, onOpen }: P
   const { t, lang } = useI18n();
   const ref = useReveal<HTMLLIElement>();
   const title = lang === 'ar' ? game.titleAr : game.titleEn;
+  const genre = GENRES[game.genres[0]][lang];
 
   return (
     <li ref={ref} className="grid__item reveal" style={{ '--i': index % 4 } as CSSProperties}>
@@ -25,24 +27,30 @@ export const GameCard = memo(function GameCard({ game, index, eager, onOpen }: P
         aria-label={`${t.viewDetailsOf(title)} · ${t.released(game.releaseYear)} · ${t.inBundle}`}
         aria-haspopup="dialog"
       >
-        <GameCover
-          game={game}
-          eager={eager}
-          sizes="(min-width: 1100px) 260px, (min-width: 700px) 30vw, 45vw"
-          className="card__cover"
-        />
+        <span className="card__media">
+          <GameCover
+            game={game}
+            eager={eager}
+            sizes="(min-width: 1100px) 260px, (min-width: 700px) 30vw, 45vw"
+            className="card__cover"
+          />
+        </span>
         <span className="card__body">
-          <span className="card__title" lang={lang}>
+          <span className="card__title" lang={lang} title={title}>
             {title}
           </span>
-          <span className="card__year">{t.released(game.releaseYear)}</span>
-          <span className="badge">
-            <svg className="badge__check" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
-              <circle cx="8" cy="8" r="8" />
-              <path d="M4.6 8.3 7 10.6l4.4-5" />
+          <span className="card__meta">
+            <svg className="card__icon" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
+              <rect x="2" y="3" width="12" height="11" rx="2" />
+              <path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3" />
             </svg>
-            {t.inBundle}
+            <span className="card__year">{game.releaseYear}</span>
+            <span className="card__sep" aria-hidden="true" />
+            <span className="card__genre">{genre}</span>
           </span>
+        </span>
+        <span className="card__foot">
+          <BundleBadge variant="plain" />
         </span>
       </button>
     </li>
