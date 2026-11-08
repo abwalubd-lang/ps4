@@ -6,6 +6,7 @@ React 18 + TypeScript + Vite, plain CSS (no UI framework).
 ## Run
 
 ```bash
+cd app
 npm install
 npm run dev        # http://localhost:5173
 npm run build      # type-check + production build into dist/
@@ -17,16 +18,23 @@ npm run validate   # check the dataset (100 unique entries, order, bilingual fie
 (Netlify, Vercel, GitHub Pages, S3, cPanel…). It needs to be served over HTTP; opening
 `dist/index.html` straight from disk won't work because browsers block module scripts on `file://`.
 
-## Deploying (GitHub Pages)
+## Layout and publishing
 
-Every push to `main` runs `.github/workflows/deploy.yml`: it installs dependencies, validates the dataset,
-builds, and publishes `dist/` to GitHub Pages. One-time setup in the repository: **Settings → Pages →
-Build and deployment → Source: GitHub Actions**.
+- `app/` — the source (React + TypeScript + Vite), cover originals and scripts.
+- Repository root (`index.html`, `assets/`, `covers/`, icons, `.nojekyll`) — the built site.
+
+GitHub Pages serves the root as-is (**Settings → Pages → Deploy from a branch → `main` / `/ (root)`**),
+so after any change, rebuild the root copy and commit both:
+
+```bash
+cd app
+npm run publish   # validate + build + copy app/dist to the repository root
+```
 
 ## Replacing brand assets
 
-- **Logo**: `src/assets/dpy-logo.webp` (the official transparent logo, trimmed of empty margin). Replace that file to update the header, footer and loading screen.
-- **Favicon**: replace `public/favicon.svg` (or add a PNG and update the `<link rel="icon">` in `index.html`).
+- **Logo**: `app/src/assets/dpy-logo.webp` (the official transparent logo, trimmed of empty margin). Replace that file to update the header, footer and loading screen.
+- **Favicon**: replace `app/public/favicon.png` (or add a PNG and update the `<link rel="icon">` in `index.html`).
 
 ## Game data
 
