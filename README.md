@@ -23,8 +23,9 @@ npm run validate   # check the dataset (100 unique entries, order, bilingual fie
 - `app/` — the source (React + TypeScript + Vite), cover originals and scripts.
 - Repository root (`index.html`, `assets/`, `covers/`, icons, `.nojekyll`) — the built site.
 
-GitHub Pages serves the root as-is (**Settings → Pages → Deploy from a branch → `main` / `/ (root)`**),
-so after any change, rebuild the root copy and commit both:
+On every push to `main`, `.github/workflows/deploy.yml` publishes that root copy to GitHub Pages
+(**Settings → Pages → Source: GitHub Actions**). The root also works as-is with
+"Deploy from a branch → `main` / `/ (root)`". After any change, rebuild the root copy and commit both:
 
 ```bash
 cd app
