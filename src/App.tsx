@@ -4,7 +4,6 @@ import { Footer } from './components/Footer';
 import { GameDetailsModal } from './components/GameDetailsModal';
 import { GameGrid } from './components/GameGrid';
 import { Header } from './components/Header';
-import { HeroSection } from './components/HeroSection';
 import { SplashScreen } from './components/SplashScreen';
 import { GAMES, GENRES, type Game } from './data';
 import { useI18n } from './i18n/LanguageContext';
@@ -34,11 +33,6 @@ export default function App() {
   const searchRef = useRef<HTMLInputElement>(null);
   const catalogueRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
-
-  const scrollToCatalogue = useCallback(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    catalogueRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  }, []);
 
   // "/" jumps to search from anywhere outside a text field.
   useEffect(() => {
@@ -82,8 +76,6 @@ export default function App() {
       </a>
       <Header ref={searchRef} query={filters.query} onQueryChange={(query) => update({ query })} />
       <main id="top">
-        <HeroSection onExplore={scrollToCatalogue} />
-
         <section id="catalogue" ref={catalogueRef} className="catalogue" aria-labelledby="catalogue-title">
           <div className="container">
             <div className="catalogue__head">

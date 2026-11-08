@@ -346,78 +346,6 @@ a:hover {
   color: var(--on-light);
 }
 
-/* ---------- Hero ---------- */
-
-.hero {
-  background: var(--bg);
-  overflow: hidden;
-}
-
-.hero__inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding-block: clamp(48px, 9vw, 96px) 0;
-  text-align: center;
-}
-
-.hero__eyebrow {
-  color: var(--text-2);
-  font-size: clamp(17px, 2vw, 21px);
-  font-weight: 600;
-}
-
-.hero__title {
-  max-width: 16ch;
-  font-family: var(--font-display);
-  font-size: clamp(38px, 7vw, 72px);
-  font-weight: 700;
-  line-height: 1.07;
-  letter-spacing: -0.03em;
-  text-wrap: balance;
-}
-
-html[lang='ar'] .hero__title {
-  letter-spacing: 0;
-  line-height: 1.25;
-}
-
-.hero__text {
-  color: var(--text-2);
-  font-size: clamp(19px, 2.4vw, 24px);
-  line-height: 1.4;
-}
-
-.hero__inner .btn {
-  margin-top: 10px;
-}
-
-.hero__trophy {
-  width: clamp(170px, 26vw, 280px);
-  height: auto;
-  margin-top: 28px;
-  margin-bottom: -12px;
-  filter: drop-shadow(0 30px 40px rgba(0, 60, 140, 0.18));
-}
-
-/* Hero entrance: plays when the opening note leaves (html.is-ready). */
-.anim {
-  opacity: 0;
-  transform: translateY(22px);
-}
-
-html.is-ready .anim {
-  animation: rise 0.9s var(--ease) both;
-  animation-delay: calc(var(--d) * 110ms);
-}
-
-html.is-ready .hero__trophy {
-  animation:
-    rise 1s var(--ease) both calc(var(--d) * 110ms),
-    float 7s ease-in-out 1.6s infinite;
-}
-
 @keyframes rise {
   from {
     opacity: 0;
@@ -429,20 +357,11 @@ html.is-ready .hero__trophy {
   }
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
 /* ---------- Catalogue ---------- */
 
 .catalogue {
-  padding-block: 56px 88px;
+  min-height: 100vh;
+  padding-block: 40px 88px;
   background: var(--bg-alt);
 }
 
@@ -539,6 +458,42 @@ html[lang='ar'] .catalogue__title {
 .grid__item {
   display: flex;
   min-width: 0;
+}
+
+/* Staggered layout: every other column sits lower, so the cards zig-zag
+   instead of lining up in flat rows. `translate` is separate from the
+   `transform` used by the reveal and hover effects. */
+.grid {
+  --stagger: 44px;
+  padding-bottom: var(--stagger);
+}
+
+.grid__item:nth-child(2n) {
+  translate: 0 var(--stagger);
+}
+
+@media (min-width: 700px) {
+  .grid {
+    --stagger: 56px;
+  }
+  .grid__item:nth-child(2n) {
+    translate: none;
+  }
+  .grid__item:nth-child(3n + 2) {
+    translate: 0 var(--stagger);
+  }
+}
+
+@media (min-width: 1000px) {
+  .grid {
+    --stagger: 64px;
+  }
+  .grid__item:nth-child(3n + 2) {
+    translate: none;
+  }
+  .grid__item:nth-child(2n) {
+    translate: 0 var(--stagger);
+  }
 }
 
 /* Scroll reveal: each card rises in as it enters the viewport, staggered by column. */
@@ -1188,7 +1143,22 @@ html[lang='ar'] .detail__label {
   letter-spacing: -0.02em;
   text-align: center;
   text-wrap: balance;
-  animation: rise 0.8s var(--ease) both 0.1s;
+  animation:
+    rise 0.8s var(--ease) both 0.1s,
+    blink 1.3s ease-in-out 0.9s infinite;
+}
+
+/* Breathes: fades down with a soft glow, then comes back. */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+    text-shadow: 0 0 24px rgba(255, 255, 255, 0.35);
+  }
+  50% {
+    opacity: 0.25;
+    text-shadow: none;
+  }
 }
 
 html[lang='ar'] .splash__text {
@@ -1274,7 +1244,7 @@ html[lang='ar'] .splash__text {
     transition-delay: 0s !important;
     scroll-behavior: auto !important;
   }
-  .anim,
+
   .reveal {
     opacity: 1;
     transform: none;
