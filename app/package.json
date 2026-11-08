@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "publish": "npm run validate && npm run build && node scripts/publish-root.mjs",
     "preview": "vite preview",
     "validate": "tsx scripts/validate-data.ts",
     "check": "npm run validate && npm run build"
