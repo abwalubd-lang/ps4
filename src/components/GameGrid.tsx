@@ -6,13 +6,11 @@ interface Props {
   onOpen: (game: Game, trigger: HTMLElement) => void;
 }
 
-const EAGER_COUNT = 12;
-
 export function GameGrid({ games, onOpen }: Props) {
   return (
     <ul className="grid">
       {games.map((game, i) => (
-        <GameCard key={game.id} game={game} eager={i < EAGER_COUNT} onOpen={onOpen} />
+        <GameCard key={game.id} game={game} index={i} eager={i < 8} onOpen={onOpen} />
       ))}
     </ul>
   );

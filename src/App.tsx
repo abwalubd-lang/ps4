@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { CatalogueToolbar } from './components/CatalogueToolbar';
 import { EmptyState } from './components/EmptyState';
 import { Footer } from './components/Footer';
 import { GameDetailsModal } from './components/GameDetailsModal';
@@ -7,8 +6,9 @@ import { GameGrid } from './components/GameGrid';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { SplashScreen } from './components/SplashScreen';
-import { GAMES, type Game } from './data';
-import { useCatalogue } from './lib/useCatalogue';
+import { GAMES, GENRES, type Game } from './data';
+import { useI18n } from './i18n/LanguageContext';
+import { ALL_GENRES, useCatalogue } from './lib/useCatalogue';
 
 function readGameFromUrl(): Game | null {
   const id = new URLSearchParams(window.location.search).get('game');
@@ -27,11 +27,17 @@ function writeGameToUrl(game: Game | null) {
 }
 
 export default function App() {
-  const { filters, update, reset, results, availableLetters, activeCount, total } = useCatalogue();
+  const { t, lang } = useI18n();
+  const { filters, update, reset, results, total } = useCatalogue();
   const [selected, setSelected] = useState<Game | null>(readGameFromUrl);
   const searchRef = useRef<HTMLInputElement>(null);
   const catalogueRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
+
+  const scrollToCatalogue = useCallback(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    catalogueRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  }, []);
 
   // "/" jumps to search from anywhere outside a text field.
   useEffect(() => {
@@ -45,21 +51,15 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const scrollToCatalogue = useCallback(() => {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    catalogueRef.current?.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  }, []);
-
-  // When results change while scrolled down, return to the top of the list.
+  // When the results change while scrolled past the top of the list, bring the list back into view.
   const isFirstRender = useRef(true);
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-    const top = catalogueRef.current?.getBoundingClientRect().top ?? 0;
-    if (top < 0) catalogueRef.current?.scrollIntoView({ block: 'start' });
-  }, [filters.query, filters.genre, filters.year, filters.letter, filters.sort]);
+    if ((catalogueRef.current?.getBoundingClientRect().top ?? 0) < 0) catalogueRef.current?.scrollIntoView({ block: 'start' });
+  }, [filters.query, filters.genre]);
 
   const openGame = useCallback((game: Game, trigger: HTMLElement) => {
     triggerRef.current = trigger;
@@ -67,40 +67,57 @@ export default function App() {
     writeGameToUrl(game);
   }, []);
 
-  const navigateGame = useCallback((game: Game) => {
-    setSelected(game);
-    writeGameToUrl(game);
-  }, []);
-
   const closeGame = useCallback(() => {
     setSelected(null);
     writeGameToUrl(null);
-    // Return focus to the card that opened the dialog without moving the page.
     requestAnimationFrame(() => triggerRef.current?.focus({ preventScroll: true }));
   }, []);
 
   return (
     <>
+      <a className="skip-link" href="#catalogue">
+        {t.skipToGames}
+      </a>
       <Header ref={searchRef} query={filters.query} onQueryChange={(query) => update({ query })} />
       <main id="top">
         <HeroSection onExplore={scrollToCatalogue} />
-        <section id="catalogue" ref={catalogueRef} className="container catalogue" aria-labelledby="catalogue-title">
-        <CatalogueToolbar
-          filters={filters}
-          update={update}
-          reset={reset}
-          availableLetters={availableLetters}
-          activeCount={activeCount}
-          resultCount={results.length}
-          total={total}
-        />
-        {results.length ? <GameGrid games={results} onOpen={openGame} /> : <EmptyState onReset={reset} />}
+
+        <section id="catalogue" ref={catalogueRef} className="catalogue" aria-labelledby="catalogue-title">
+          <div className="container">
+            <div className="catalogue__head">
+              <h2 id="catalogue-title" className="catalogue__title">
+                {t.catalogueTitle}
+              </h2>
+              <p className="catalogue__count" aria-live="polite">
+                {filters.query || filters.genre ? t.showing(results.length, total) : t.catalogueCount(total)}
+              </p>
+            </div>
+
+            <div className="chips" role="group" aria-label={t.genre}>
+              <button type="button" className="chip" aria-pressed={!filters.genre} onClick={() => update({ genre: null })}>
+                {t.allGenres}
+              </button>
+              {ALL_GENRES.map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  className="chip"
+                  aria-pressed={filters.genre === key}
+                  onClick={() => update({ genre: filters.genre === key ? null : key })}
+                >
+                  {GENRES[key][lang]}
+                </button>
+              ))}
+            </div>
+
+            {results.length ? <GameGrid games={results} onOpen={openGame} /> : <EmptyState onReset={reset} />}
+          </div>
         </section>
       </main>
       <Footer />
 
+      <GameDetailsModal game={selected} onClose={closeGame} />
       <SplashScreen />
-      <GameDetailsModal game={selected} list={results.length ? results : GAMES} onClose={closeGame} onNavigate={navigateGame} />
     </>
   );
 }
