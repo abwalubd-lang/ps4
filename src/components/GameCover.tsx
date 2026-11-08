@@ -54,7 +54,7 @@ export function GameCover({ game, sizes, eager = false, className = '' }: Props)
         sizes={source.srcSet ? sizes : undefined}
         alt={alt}
         width={600}
-        height={900}
+        height={600}
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
         onLoad={() => setLoaded(true)}

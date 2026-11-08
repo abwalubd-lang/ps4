@@ -38,16 +38,18 @@ the right games).
 
 ## Cover artwork
 
-`src/lib/covers.ts` resolves artwork in this order, and `GameCover` falls through on any load error:
+All 100 games have a square DPY cover in `public/covers/<game-id>.webp` (600×600).
+The originals live in `covers-source/NNN-<game-id>.<ext>` (NNN = catalogue order).
 
-1. `coverImage` on the entry: a file in `public/covers/` or any URL. Always wins.
-2. Steam store artwork for `steamAppId` (portrait `library_600x900`, then the landscape store header shown letterboxed).
-3. A typographic DPY placeholder cover (title + year).
+To replace a cover, put the new image in `covers-source/` with the same `NNN-<game-id>` name and run:
 
-84 entries have a Steam app ID; 16 titles aren't sold on Steam and show the placeholder until you add
-licensed art via `coverImage`: Bloodborne, CoD Vanguard, CoD Modern Warfare (2019), CoD Modern Warfare II (2022),
-CoD Black Ops 4, CoD Black Ops Cold War, DOOM (1993), Devil May Cry 1–3, Diablo III: Reaper of Souls,
-Diablo II: Resurrected, Fortnite, FIFA 20, Gran Turismo 7, Persona 5. Run `npm run validate` to get the current list.
+```bash
+python3 scripts/process-covers.py   # needs Pillow (pip install pillow)
+```
+
+Near-square images are centre-cropped; other shapes are fitted whole over a blurred copy of
+themselves, so no title is cut off and every cover has the same size. If a cover ever fails to load,
+the site falls back to Steam store art, then to a typographic DPY card.
 
 ## PS4 trophy statistics
 

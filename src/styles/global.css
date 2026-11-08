@@ -1069,7 +1069,7 @@ a {
 
 .cover {
   position: relative;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 1 / 1;
   overflow: hidden;
   background: linear-gradient(160deg, var(--surface-3), var(--surface-2));
   container-type: inline-size;
