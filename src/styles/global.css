@@ -1,28 +1,29 @@
 /* ==========================================================================
    DPY | دبلوماسي بلس — PS4 Trophy Games Bundle
-   Apple-inspired: white and light-grey surfaces, near-black text, one blue
-   for actions, generous space, soft motion. The nav stays dark so the white
-   DPY logo reads clearly.
+   Apple-inspired dark mode: black page, dark-grey surfaces, light text,
+   one blue for actions, generous space, soft motion.
    ========================================================================== */
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 
-  --bg: #ffffff;
-  --bg-alt: #f5f5f7;
-  --fill: #e8e8ed;
-  --line: #d2d2d7;
-  --text: #1d1d1f;
-  --text-2: #6e6e73;
+  --bg: #000000;
+  --bg-alt: #0d0d0f;
+  --surface: #1c1c1e;
+  --fill: #2c2c2e;
+  --line: #38383a;
+  --text: #f5f5f7;
+  --text-2: #a1a1a6;
   --text-3: #86868b;
-  --accent: #0071e3;
-  --accent-hover: #0077ed;
-  --link: #0066cc;
-  --nav: rgba(22, 22, 23, 0.82);
-  --green: #34c759;
-  --green-text: #1f7a34;
-  --green-soft: rgba(52, 199, 89, 0.12);
-  --card-line: #e3e3e8;
+  --on-light: #1d1d1f;
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --link: #2997ff;
+  --nav: rgba(28, 28, 30, 0.72);
+  --green: #30d158;
+  --green-text: #30d158;
+  --green-soft: rgba(48, 209, 88, 0.14);
+  --card-line: #2c2c2e;
   --spring: cubic-bezier(0.32, 0.72, 0, 1);
 
   --radius: 18px;
@@ -145,7 +146,7 @@ a:hover {
   padding: 8px 14px;
   border-radius: 8px;
   background: var(--text);
-  color: #fff;
+  color: var(--on-light);
   transform: translateY(-160%);
   transition: transform 0.2s var(--ease);
 }
@@ -200,6 +201,7 @@ a:hover {
   top: 0;
   z-index: 50;
   background: var(--nav);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   backdrop-filter: saturate(180%) blur(20px);
   -webkit-backdrop-filter: saturate(180%) blur(20px);
   color: #f5f5f7;
@@ -340,8 +342,8 @@ a:hover {
 }
 
 .lang-switch__btn[aria-pressed='true'] {
-  background: #f5f5f7;
-  color: var(--text);
+  background: var(--text);
+  color: var(--on-light);
 }
 
 /* ---------- Hero ---------- */
@@ -490,7 +492,7 @@ html[lang='ar'] .catalogue__title {
   padding: 0 16px;
   border: 0;
   border-radius: 980px;
-  background: var(--bg);
+  background: var(--surface);
   color: var(--text);
   font-size: 14px;
   font-weight: 500;
@@ -508,7 +510,7 @@ html[lang='ar'] .catalogue__title {
 
 .chip[aria-pressed='true'] {
   background: var(--text);
-  color: #fff;
+  color: var(--on-light);
 }
 
 /* ---------- Grid & cards ---------- */
@@ -562,11 +564,9 @@ html[lang='ar'] .catalogue__title {
   padding: 12px;
   border: 1px solid var(--card-line);
   border-radius: 22px;
-  background: var(--bg);
+  background: var(--surface);
   text-align: center;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.04),
-    0 6px 16px -10px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px -14px rgba(0, 0, 0, 0.8);
   transition:
     transform 0.5s var(--spring),
     box-shadow 0.5s var(--spring),
@@ -577,7 +577,7 @@ html[lang='ar'] .catalogue__title {
 .card__cover {
   width: 100%;
   border-radius: 14px;
-  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .card__cover .cover__img {
@@ -654,10 +654,8 @@ html[lang='ar'] .catalogue__title {
 @media (hover: hover) {
   .card:hover {
     transform: translateY(-6px);
-    border-color: #d2d2d7;
-    box-shadow:
-      0 2px 4px rgba(0, 0, 0, 0.04),
-      0 24px 44px -18px rgba(0, 0, 0, 0.22);
+    border-color: #48484a;
+    box-shadow: 0 28px 50px -20px rgba(0, 0, 0, 0.9);
   }
   .card:hover .cover__img {
     transform: scale(1.05);
@@ -802,7 +800,7 @@ html[lang='ar'] .catalogue__title {
 }
 
 .sheet::backdrop {
-  background: rgba(0, 0, 0, 0.38);
+  background: rgba(0, 0, 0, 0.65);
   animation: fade-in 0.4s ease both;
 }
 
@@ -816,7 +814,7 @@ html[lang='ar'] .catalogue__title {
   max-height: 92dvh;
   overflow-y: auto;
   overscroll-behavior: contain;
-  background: var(--bg);
+  background: var(--surface);
   border-radius: 26px 26px 0 0;
   box-shadow: 0 -10px 40px -20px rgba(0, 0, 0, 0.3);
   animation: sheet-up 0.55s var(--spring) both;
@@ -949,7 +947,9 @@ html[lang='ar'] .catalogue__title {
     width: min(880px, calc(100% - 64px));
     max-height: 86vh;
     border-radius: 28px;
-    box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.45);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.06),
+      0 40px 100px -30px rgba(0, 0, 0, 0.9);
     animation: zoom-in 0.6s var(--spring) both;
   }
   .sheet.is-closing .sheet__panel {
@@ -1039,7 +1039,7 @@ html[lang='ar'] .catalogue__title {
   justify-content: center;
   gap: 28px;
   padding: 24px var(--gutter);
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(0, 0, 0, 0.72);
   backdrop-filter: saturate(180%) blur(24px);
   -webkit-backdrop-filter: saturate(180%) blur(24px);
   transition: opacity 0.45s ease;
