@@ -19,6 +19,11 @@
   --accent-hover: #0077ed;
   --link: #0066cc;
   --nav: rgba(22, 22, 23, 0.82);
+  --green: #34c759;
+  --green-text: #1f7a34;
+  --green-soft: rgba(52, 199, 89, 0.12);
+  --card-line: #e3e3e8;
+  --spring: cubic-bezier(0.32, 0.72, 0, 1);
 
   --radius: 18px;
   --radius-sm: 12px;
@@ -552,45 +557,42 @@ html[lang='ar'] .catalogue__title {
 .card {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  align-items: center;
   width: 100%;
-  padding: 10px 10px 16px;
-  border: 0;
-  border-radius: var(--radius);
+  padding: 12px;
+  border: 1px solid var(--card-line);
+  border-radius: 22px;
   background: var(--bg);
   text-align: center;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 6px 16px -10px rgba(0, 0, 0, 0.12);
   transition:
-    transform 0.45s var(--ease),
-    box-shadow 0.45s var(--ease);
+    transform 0.5s var(--spring),
+    box-shadow 0.5s var(--spring),
+    border-color 0.3s;
 }
 
+/* Inner frame around the artwork. */
 .card__cover {
-  border-radius: var(--radius-sm);
+  width: 100%;
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
 
 .card__cover .cover__img {
   transition:
-    transform 0.6s var(--ease),
+    transform 0.7s var(--spring),
     opacity 0.4s;
 }
 
-@media (hover: hover) {
-  .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.18);
-  }
-  .card:hover .cover__img {
-    transform: scale(1.04);
-  }
-}
-
-.card:active {
-  transform: scale(0.98);
-}
-
-.card:focus-visible {
-  border-radius: var(--radius);
+.card__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 14px 4px 4px;
 }
 
 .card__title {
@@ -598,14 +600,98 @@ html[lang='ar'] .catalogue__title {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  padding-inline: 4px;
+  min-height: calc(2 * 1.35em); /* two lines, so years and badges line up across a row */
   font-size: 15px;
   font-weight: 600;
   line-height: 1.35;
 }
 
 .card__title:lang(ar) {
-  line-height: 1.6;
+  line-height: 1.55;
+  min-height: calc(2 * 1.55em);
+}
+
+.card__year {
+  color: var(--text-2);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 5px 12px 5px 10px;
+  border-radius: 980px;
+  background: var(--green-soft);
+  color: var(--green-text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+[dir='rtl'] .badge {
+  padding: 5px 10px 5px 12px;
+}
+
+.badge__check {
+  flex-shrink: 0;
+}
+
+.badge__check circle {
+  fill: var(--green);
+}
+
+.badge__check path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: #d2d2d7;
+    box-shadow:
+      0 2px 4px rgba(0, 0, 0, 0.04),
+      0 24px 44px -18px rgba(0, 0, 0, 0.22);
+  }
+  .card:hover .cover__img {
+    transform: scale(1.05);
+  }
+}
+
+.card:active {
+  transform: scale(0.97);
+  transition-duration: 0.15s;
+}
+
+.card:focus-visible {
+  border-radius: 22px;
+}
+
+@media (max-width: 420px) {
+  .card {
+    padding: 8px;
+    border-radius: 18px;
+  }
+  .card__cover {
+    border-radius: 12px;
+  }
+  .card__title {
+    font-size: 14px;
+  }
+  .card__year,
+  .badge {
+    font-size: 12px;
+  }
+  .badge {
+    padding-inline: 8px 10px;
+    gap: 5px;
+  }
 }
 
 /* ---------- Cover ---------- */
@@ -716,10 +802,12 @@ html[lang='ar'] .catalogue__title {
 }
 
 .sheet::backdrop {
-  background: rgba(0, 0, 0, 0.32);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  animation: fade 0.35s ease both;
+  background: rgba(0, 0, 0, 0.38);
+  animation: fade-in 0.4s ease both;
+}
+
+.sheet.is-closing::backdrop {
+  animation: fade-out 0.32s ease both;
 }
 
 .sheet__panel {
@@ -729,8 +817,42 @@ html[lang='ar'] .catalogue__title {
   overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--bg);
-  border-radius: 24px 24px 0 0;
-  animation: sheet-up 0.5s var(--ease) both;
+  border-radius: 26px 26px 0 0;
+  box-shadow: 0 -10px 40px -20px rgba(0, 0, 0, 0.3);
+  animation: sheet-up 0.55s var(--spring) both;
+  will-change: transform;
+}
+
+.sheet.is-closing .sheet__panel {
+  animation: sheet-down 0.34s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+/* Content settles in just after the panel, one piece at a time. */
+.sheet__cover,
+.sheet__title,
+.sheet__subtitle,
+.sheet__story {
+  animation: settle 0.6s var(--spring) both;
+}
+
+.sheet__cover {
+  animation-delay: 0.08s;
+}
+
+.sheet__title {
+  animation-delay: 0.16s;
+}
+
+.sheet__subtitle {
+  animation-delay: 0.2s;
+}
+
+.sheet__story {
+  animation-delay: 0.26s;
+}
+
+.sheet.is-closing :is(.sheet__cover, .sheet__title, .sheet__subtitle, .sheet__story) {
+  animation: none;
 }
 
 .sheet__close {
@@ -746,16 +868,19 @@ html[lang='ar'] .catalogue__title {
   border-radius: 50%;
   background: var(--fill);
   color: var(--text-2);
-  transition: background-color 0.2s, transform 0.2s var(--ease);
+  transition:
+    background-color 0.2s,
+    transform 0.25s var(--spring);
 }
 
 .sheet__close:hover {
   background: var(--line);
   color: var(--text);
+  transform: rotate(90deg);
 }
 
 .sheet__close:active {
-  transform: scale(0.92);
+  transform: scale(0.9);
 }
 
 .sheet__body {
@@ -768,8 +893,8 @@ html[lang='ar'] .catalogue__title {
 
 .sheet__cover {
   width: min(240px, 64vw);
-  border-radius: 16px;
-  box-shadow: 0 20px 44px -16px rgba(0, 0, 0, 0.35);
+  border-radius: 18px;
+  box-shadow: 0 22px 44px -18px rgba(0, 0, 0, 0.4);
 }
 
 .sheet__text {
@@ -825,7 +950,10 @@ html[lang='ar'] .catalogue__title {
     max-height: 86vh;
     border-radius: 28px;
     box-shadow: 0 40px 100px -30px rgba(0, 0, 0, 0.45);
-    animation-name: pop;
+    animation: zoom-in 0.6s var(--spring) both;
+  }
+  .sheet.is-closing .sheet__panel {
+    animation: zoom-out 0.38s cubic-bezier(0.5, 0, 0.75, 0) both;
   }
   .sheet__body {
     flex-direction: row;
@@ -839,6 +967,7 @@ html[lang='ar'] .catalogue__title {
   }
   .sheet__text {
     text-align: start;
+    padding-top: 8px;
   }
   /* The other-language name follows the page direction, not its own. */
   html[dir='rtl'] .sheet__subtitle {
@@ -847,8 +976,54 @@ html[lang='ar'] .catalogue__title {
   html[dir='ltr'] .sheet__subtitle {
     text-align: left;
   }
-  .sheet__text {
-    padding-top: 8px;
+}
+
+/* Desktop: grow out of the tapped card, shrink back into it. */
+@keyframes zoom-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--from-x, 0px), var(--from-y, 24px)) scale(var(--from-s, 0.94));
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-out {
+  to {
+    opacity: 0;
+    transform: translate(var(--from-x, 0px), var(--from-y, 24px)) scale(var(--from-s, 0.94));
+  }
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes sheet-down {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
   }
 }
 
@@ -958,18 +1133,6 @@ html[lang='ar'] .splash__text {
   }
 }
 
-@keyframes sheet-up {
-  from {
-    transform: translateY(100%);
-  }
-}
-
-@keyframes pop {
-  from {
-    opacity: 0;
-    transform: scale(0.96) translateY(10px);
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
   *,

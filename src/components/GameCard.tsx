@@ -22,7 +22,7 @@ export const GameCard = memo(function GameCard({ game, index, eager, onOpen }: P
         type="button"
         className="card"
         onClick={(e) => onOpen(game, e.currentTarget)}
-        aria-label={t.viewDetailsOf(title)}
+        aria-label={`${t.viewDetailsOf(title)} · ${t.released(game.releaseYear)} · ${t.inBundle}`}
         aria-haspopup="dialog"
       >
         <GameCover
@@ -31,8 +31,18 @@ export const GameCard = memo(function GameCard({ game, index, eager, onOpen }: P
           sizes="(min-width: 1100px) 260px, (min-width: 700px) 30vw, 45vw"
           className="card__cover"
         />
-        <span className="card__title" lang={lang}>
-          {title}
+        <span className="card__body">
+          <span className="card__title" lang={lang}>
+            {title}
+          </span>
+          <span className="card__year">{t.released(game.releaseYear)}</span>
+          <span className="badge">
+            <svg className="badge__check" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+              <circle cx="8" cy="8" r="8" />
+              <path d="M4.6 8.3 7 10.6l4.4-5" />
+            </svg>
+            {t.inBundle}
+          </span>
         </span>
       </button>
     </li>

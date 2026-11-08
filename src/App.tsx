@@ -30,6 +30,7 @@ export default function App() {
   const { t, lang } = useI18n();
   const { filters, update, reset, results, total } = useCatalogue();
   const [selected, setSelected] = useState<Game | null>(readGameFromUrl);
+  const [origin, setOrigin] = useState<DOMRect | null>(null);
   const searchRef = useRef<HTMLInputElement>(null);
   const catalogueRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -63,6 +64,7 @@ export default function App() {
 
   const openGame = useCallback((game: Game, trigger: HTMLElement) => {
     triggerRef.current = trigger;
+    setOrigin(trigger.getBoundingClientRect());
     setSelected(game);
     writeGameToUrl(game);
   }, []);
@@ -116,7 +118,7 @@ export default function App() {
       </main>
       <Footer />
 
-      <GameDetailsModal game={selected} onClose={closeGame} />
+      <GameDetailsModal game={selected} origin={origin} onClose={closeGame} />
       <SplashScreen />
     </>
   );
